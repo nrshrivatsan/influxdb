@@ -1043,7 +1043,9 @@ func NewStore(c *meta.Config) *Store {
 	s := &Store{
 		Store: meta.NewStore(c),
 	}
-	s.Logger = log.New(&s.Stderr, "", log.LstdFlags)
+	if !testing.Verbose() {
+		s.Logger = log.New(&s.Stderr, "", log.LstdFlags)
+	}
 	s.SetHashPasswordFn(mockHashPassword)
 	return s
 }
@@ -1059,8 +1061,6 @@ func MustOpenStoreWithPath(addr, path string) *Store {
 	s := NewStore(c)
 	if addr != "" {
 		s.BindAddress = addr
-	} else {
-		addr = "127.0.0.1:0"
 	}
 	if err := s.Open(); err != nil {
 		panic(err)
